@@ -9,7 +9,7 @@ public interface ChannelService {
 
     Channel create(String name);
     Channel read(UUID id);
-    List<Channel> findAll();
+    List<Channel> readAll();
     Channel update(UUID id, String name);
     void delete(UUID id);
 

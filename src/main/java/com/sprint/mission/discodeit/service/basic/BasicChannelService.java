@@ -33,7 +33,7 @@ public class BasicChannelService implements ChannelService {
     }
 
     @Override
-    public List<Channel> findAll() {
+    public List<Channel> readAll() {
         return channelRepository.findAll();
     }
 

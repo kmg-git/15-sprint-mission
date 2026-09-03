@@ -96,4 +96,12 @@ public class FileChannelRepository implements ChannelRepository {
             throw new RuntimeException(e);
         }
     }
+
+
+    @Override
+    public boolean existsById(UUID id) {
+        Path path = resolvePath(id);
+        return Files.exists(path);
+    }
+
 }
