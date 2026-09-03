@@ -17,9 +17,8 @@ public class FileMessageRepository implements MessageRepository {
     private final String EXTENSION = ".ser";
 
 
-    private final static FileMessageRepository instance = new FileMessageRepository();
-    private FileMessageRepository() {
-        this.DIRECTORY = Paths.get(System.getProperty("user.dir"), "saveData", Message.class.getSimpleName());
+    public FileMessageRepository() {
+        this.DIRECTORY = Paths.get(System.getProperty("user.dir"), "file-data-map", Message.class.getSimpleName());
         if (Files.notExists(DIRECTORY)) {
             try {
                 Files.createDirectories(DIRECTORY);
@@ -27,9 +26,6 @@ public class FileMessageRepository implements MessageRepository {
                 throw new RuntimeException(e);
             }
         }
-    }
-    public static FileMessageRepository getInstance() {
-        return instance;
     }
 
     private Path resolvePath(UUID id) {

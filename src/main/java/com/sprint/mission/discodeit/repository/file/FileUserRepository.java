@@ -18,9 +18,8 @@ public class FileUserRepository implements UserRepository {
     private final String EXTENSION = ".ser";
 
 
-    private final static FileUserRepository instance = new FileUserRepository();
-    private FileUserRepository() {
-        this.DIRECTORY = Paths.get(System.getProperty("user.dir"), "saveData", User.class.getSimpleName());
+    public FileUserRepository() {
+        this.DIRECTORY = Paths.get(System.getProperty("user.dir"), "file-data-map", User.class.getSimpleName());
         if (Files.notExists(DIRECTORY)) {
             try {
                 Files.createDirectories(DIRECTORY);
@@ -28,9 +27,6 @@ public class FileUserRepository implements UserRepository {
                 throw new RuntimeException(e);
             }
         }
-    }
-    public static FileUserRepository getInstance() {
-        return instance;
     }
 
     private Path resolvePath(UUID id) {

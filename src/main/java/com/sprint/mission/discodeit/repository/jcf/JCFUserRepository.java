@@ -9,10 +9,7 @@ import java.util.*;
 public class JCFUserRepository implements UserRepository {
     final Map<UUID, User> data = new HashMap<>();
 
-    private final static JCFUserRepository instance = new JCFUserRepository();
-    private JCFUserRepository() { }
-    public static JCFUserRepository getInstance() {
-        return instance;
+    public JCFUserRepository(){
     }
 
 

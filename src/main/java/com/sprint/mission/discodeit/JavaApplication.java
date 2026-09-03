@@ -4,9 +4,15 @@ import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.NitroLevel;
 import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.repository.ChannelRepository;
+import com.sprint.mission.discodeit.repository.MessageRepository;
+import com.sprint.mission.discodeit.repository.UserRepository;
 import com.sprint.mission.discodeit.repository.file.FileChannelRepository;
 import com.sprint.mission.discodeit.repository.file.FileMessageRepository;
 import com.sprint.mission.discodeit.repository.file.FileUserRepository;
+import com.sprint.mission.discodeit.service.ChannelService;
+import com.sprint.mission.discodeit.service.MessageService;
+import com.sprint.mission.discodeit.service.UserService;
 import com.sprint.mission.discodeit.service.basic.BasicChannelService;
 import com.sprint.mission.discodeit.service.basic.BasicMessageService;
 import com.sprint.mission.discodeit.service.basic.BasicUserService;
@@ -15,18 +21,18 @@ import com.sprint.mission.discodeit.service.basic.BasicUserService;
 import java.util.List;
 
 public class JavaApplication {
-    static User setupUser() {
-        User user = BasicUserService.getInstance().create("woody@codeit.com", "woody1234", "woody", NitroLevel.BASIC);
+    static User setupUser(UserService userService) {
+        User user = userService.create("woody@codeit.com", "woody1234", "woody", NitroLevel.BASIC);
         return user;
     }
 
-    static Channel setupChannel() {
-        Channel channel = BasicChannelService.getInstance().create("공지");
+    static Channel setupChannel(ChannelService channelService) {
+        Channel channel = channelService.create("공지");
         return channel;
     }
 
-    static void messageCreateTest(Channel channel, User user) {
-        Message message = BasicMessageService.getInstance().create(channel.getId(), user.getId(),"안녕하세요.");
+    static void messageCreateTest(MessageService messageService , Channel channel, User user) {
+        Message message = messageService.create(channel.getId(), user.getId(),"안녕하세요.");
         System.out.println("메시지 생성: " + message.getId());
     }
 
@@ -34,30 +40,32 @@ public class JavaApplication {
 
 
 
-        BasicUserService.getInstance().setUserRepository(FileUserRepository.getInstance());
-        BasicChannelService.getInstance().setChannelRepository(FileChannelRepository.getInstance());
-        BasicMessageService.getInstance().setMessageRepository(FileMessageRepository.getInstance());
+        UserRepository userRepository = new FileUserRepository();
+        ChannelRepository channelRepository = new FileChannelRepository();
+        MessageRepository messageRepository = new FileMessageRepository();
 
-        /*BasicUserService.getInstance().setUserRepository(JCFUserRepository.getInstance());
-        BasicChannelService.getInstance().setChannelRepository(JCFChannelRepository.getInstance());
-        BasicMessageService.getInstance().setMessageRepository(JCFMessageRepository.getInstance());*/
 
-        User user = setupUser();
-        Channel channel = setupChannel();
+        UserService userService = new BasicUserService(userRepository);
+        ChannelService channelService = new BasicChannelService(channelRepository);
+        MessageService messageService = new BasicMessageService(messageRepository, channelRepository, userRepository);
+
+
+        User user = setupUser(userService);
+        Channel channel = setupChannel(channelService);
         // 테스트
-        messageCreateTest(channel, user);
-        Message testMessage1 = BasicMessageService.getInstance().create(channel.getId(),user.getId(),"실험용1");
-        List<Message> messageList = BasicMessageService.getInstance().readAll();
-        Message testMessage2 = BasicMessageService.getInstance().read(testMessage1.getId());
+        messageCreateTest(messageService, channel, user);
+        Message testMessage1 = messageService.create(channel.getId(),user.getId(),"실험용1");
+        List<Message> messageList = messageService.readAll();
+        Message testMessage2 = messageService.read(testMessage1.getId());
 
         System.out.println("user     : " + testMessage1.getId());
         System.out.println("testuser : " + testMessage2.getId());
         System.out.println("같음? : " + testMessage1.getId().equals(testMessage2.getId()));
 
-        BasicMessageService.getInstance().update(testMessage1.getId(),"WER@asdf.sd");
-        messageList = BasicMessageService.getInstance().readAll();
-        BasicMessageService.getInstance().delete(testMessage2.getId());
-        messageList = BasicMessageService.getInstance().readAll();
+        messageService.update(testMessage1.getId(),"WER@asdf.sd");
+        messageList = messageService.readAll();
+        messageService.delete(testMessage2.getId());
+        messageList = messageService.readAll();
 
         System.out.println("끝");
 

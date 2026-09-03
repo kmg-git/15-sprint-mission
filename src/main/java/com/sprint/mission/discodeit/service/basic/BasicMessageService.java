@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.service.basic;
 
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.repository.ChannelRepository;
 import com.sprint.mission.discodeit.repository.MessageRepository;
 import com.sprint.mission.discodeit.repository.UserRepository;
 import com.sprint.mission.discodeit.service.MessageService;
@@ -12,16 +13,15 @@ import java.util.UUID;
 
 public class BasicMessageService implements MessageService {
 
-    private MessageRepository messageRepository;
+    private final MessageRepository messageRepository;
+    //
+    private final ChannelRepository channelRepository;
+    private final UserRepository userRepository;
 
-    private final static BasicMessageService instance = new BasicMessageService();
-    private BasicMessageService() { }
-    public static BasicMessageService getInstance() {
-        return instance;
-    }
-
-    public void setMessageRepository(MessageRepository messageRepository) {
+    public BasicMessageService(MessageRepository messageRepository, ChannelRepository channelRepository, UserRepository userRepository) {
         this.messageRepository = messageRepository;
+        this.channelRepository = channelRepository;
+        this.userRepository = userRepository;
     }
 
     @Override

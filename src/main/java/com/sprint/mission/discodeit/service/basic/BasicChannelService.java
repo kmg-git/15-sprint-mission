@@ -9,15 +9,13 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class BasicChannelService implements ChannelService {
-    private ChannelRepository channelRepository;
-    private final static BasicChannelService instance = new BasicChannelService();
-    private BasicChannelService() { }
-    public static BasicChannelService getInstance() {
-        return instance;
-    }
-    public void setChannelRepository(ChannelRepository channelRepository) {
+    private final ChannelRepository channelRepository;
+
+    public BasicChannelService(ChannelRepository channelRepository) {
         this.channelRepository = channelRepository;
     }
+
+
     @Override
     public Channel create(String name) {
         Channel channel = new Channel(name);

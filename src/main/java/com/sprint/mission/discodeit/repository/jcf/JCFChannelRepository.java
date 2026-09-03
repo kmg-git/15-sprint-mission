@@ -9,10 +9,7 @@ import java.util.*;
 public class JCFChannelRepository implements ChannelRepository {
     final Map<UUID, Channel> data = new HashMap<>();
 
-    private final static JCFChannelRepository instance = new JCFChannelRepository();
-    private JCFChannelRepository() { }
-    public static JCFChannelRepository getInstance() {
-        return instance;
+    public JCFChannelRepository(){
     }
 
     @Override

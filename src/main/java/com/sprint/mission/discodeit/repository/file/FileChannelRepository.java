@@ -18,9 +18,8 @@ public class FileChannelRepository implements ChannelRepository {
     private final String EXTENSION = ".ser";
 
 
-    private final static FileChannelRepository instance = new FileChannelRepository();
-    private FileChannelRepository() {
-        this.DIRECTORY = Paths.get(System.getProperty("user.dir"), "saveData", Channel.class.getSimpleName());//<<이줄 수정함
+    public FileChannelRepository() {
+        this.DIRECTORY = Paths.get(System.getProperty("user.dir"), "file-data-map", Channel.class.getSimpleName());
         if (Files.notExists(DIRECTORY)) {
             try {
                 Files.createDirectories(DIRECTORY);
@@ -28,9 +27,6 @@ public class FileChannelRepository implements ChannelRepository {
                 throw new RuntimeException(e);
             }
         }
-    }
-    public static FileChannelRepository getInstance() {
-        return instance;
     }
 
     private Path resolvePath(UUID id) {

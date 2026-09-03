@@ -10,18 +10,11 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class BasicUserService implements UserService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private final static BasicUserService instance = new BasicUserService();
-    private BasicUserService() { }
-    public static BasicUserService getInstance() {
-        return instance;
-    }
-
-    public void setUserRepository(UserRepository userRepository) {
+    public BasicUserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
     @Override
     public User create(String email, String password, String name, NitroLevel nitroLevel) {
         User user = new User(email,password,name,nitroLevel);

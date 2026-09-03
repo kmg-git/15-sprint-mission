@@ -9,10 +9,7 @@ public class JCFMessageRepository implements MessageRepository {
 
     final Map<UUID, Message> data = new HashMap<>();
 
-    private final static JCFMessageRepository instance = new JCFMessageRepository();
-    private JCFMessageRepository() { }
-    public static JCFMessageRepository getInstance() {
-        return instance;
+    public JCFMessageRepository(){
     }
 
 

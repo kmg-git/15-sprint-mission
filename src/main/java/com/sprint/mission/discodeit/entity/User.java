@@ -27,6 +27,10 @@ public class User extends BaseClass {
 
     ) {
         super(id, createdAt, updatedAt);
+
+        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            throw new IllegalArgumentException("메일 형식이 아님.");
+        }
         this.email=email;
         this.password=password;
         this.name=name;
