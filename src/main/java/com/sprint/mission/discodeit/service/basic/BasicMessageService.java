@@ -26,17 +26,23 @@ public class BasicMessageService implements MessageService {
 
     @Override
     public Message create(UUID channelId, UUID userId, String messageString) {
+        if(!channelRepository.existsById(channelId)){
+            throw new NoSuchElementException("채널 id 없음 : "+ channelId);
+        }
+
+        if(!userRepository.existsById(userId)){
+            throw new NoSuchElementException("유저 id 없음 : "+ userId);
+        }
+
+
         Message message = new Message(channelId,userId,messageString);
         return messageRepository.save(message);
     }
 
     @Override
     public Message read(UUID id) {
-        try{
-            return messageRepository.findById(id).get();
-        }catch (NoSuchElementException e) {
-            throw new NoSuchElementException("id 없음");
-        }
+        return messageRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("채널 id 없음 : " + id));
     }
 
     @Override
@@ -46,27 +52,19 @@ public class BasicMessageService implements MessageService {
 
     @Override
     public Message update(UUID id, String messageString) {
-        Message message;
-        try{
-            message = messageRepository.findById(id).get();
-        }catch (NoSuchElementException e) {
-            throw new NoSuchElementException("id 없음");
-        }
-        finally {
+        Message message = messageRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("메세지 id 없음 : " + id));
+        message.update(messageString);
 
-        }
         message.update(messageString);
         return messageRepository.save(message);
     }
 
     @Override
     public void delete(UUID id) {
-        try{
-            messageRepository.findById(id).get();
-        }catch (NoSuchElementException e){
-            throw new NoSuchElementException("id 없음");
+        if (!messageRepository.existsById(id)) {
+            throw new NoSuchElementException("메세지 id 없음 : " + id);
         }
-        finally {}
         messageRepository.deleteById(id);
 
     }

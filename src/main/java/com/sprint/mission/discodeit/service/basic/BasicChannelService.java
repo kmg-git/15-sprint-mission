@@ -24,12 +24,8 @@ public class BasicChannelService implements ChannelService {
 
     @Override
     public Channel read(UUID id) {
-        try {
-            return channelRepository.findById(id).get();
-        }
-        catch (NoSuchElementException e){
-            throw new NoSuchElementException("id 없음");
-        }
+        return channelRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("채널 id 없음 : " + id));
     }
 
     @Override
@@ -39,25 +35,16 @@ public class BasicChannelService implements ChannelService {
 
     @Override
     public Channel update(UUID id, String name) {
-        Channel channel;
-        try{
-            channel = channelRepository.findById(id).get();
-        }
-        catch (NoSuchElementException e){
-            throw new NoSuchElementException("id 없음");
-        }
-        finally {}
+        Channel channel = channelRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("채널 id 없음 : " + id));
         channel.update(name);
         return channelRepository.save(channel);
     }
 
     @Override
     public void delete(UUID id) {
-
-        try {
-            channelRepository.findById(id).get();
-        }catch (NoSuchElementException e){
-            throw new NoSuchElementException("io 없음");
+        if (!channelRepository.existsById(id)) {
+            throw new NoSuchElementException("채널 id 없음 : " + id);
         }
         channelRepository.deleteById(id);
 

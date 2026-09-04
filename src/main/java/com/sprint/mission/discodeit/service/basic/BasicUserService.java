@@ -23,11 +23,8 @@ public class BasicUserService implements UserService {
 
     @Override
     public User read(UUID id) {
-        try{
-            return userRepository.findById(id).get();
-        }catch (NoSuchElementException e) {
-            throw new NoSuchElementException("id 없음");
-        }
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("유저 id 없음 : " + id));
     }
 
     @Override
@@ -37,29 +34,16 @@ public class BasicUserService implements UserService {
 
     @Override
     public User update(UUID id, String email, String password, String name, NitroLevel nitroLevel) {
-        User user;
-        try{
-            //System.out.println("1. findById 전");
-            user = userRepository.findById(id).get();
-            //System.out.println("2. findById 후");
-        }catch (NoSuchElementException e) {
-            throw new NoSuchElementException("id 없음");
-        }
-        finally {
-
-        }
-        user.update(email,password,name,nitroLevel);
-        //System.out.println("3. user.update 후");
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("유저 id 없음 : " + id));
+        user.update(email, password, name, nitroLevel);
         return userRepository.save(user);
     }
 
     @Override
     public void delete(UUID id) {
-
-        try{
-            userRepository.findById(id).get();
-        }catch (NoSuchElementException e) {
-            throw new NoSuchElementException("id 없음");
+        if (!userRepository.existsById(id)) {
+            throw new NoSuchElementException("유저 id 없음 : " + id);
         }
         userRepository.deleteById(id);
     }
