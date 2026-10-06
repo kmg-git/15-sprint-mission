@@ -10,17 +10,17 @@ public class ReadStatus extends BaseClass{
     private final UUID channelId;
     private Instant lastReadAt;
 
-    public ReadStatus(UUID userId, UUID channelId) {
+    public ReadStatus(UUID userId, UUID channelId,Instant lastReadAt) {
         super();
         this.userId = userId;
         this.channelId = channelId;
-        this.lastReadAt=this.updatedAt;
+        this.lastReadAt=lastReadAt;
     }
 
-    public void update(){
+    public void update(Instant lastReadAt){
 
         setUpdatedAt();
-        this.lastReadAt=updatedAt;
+        this.lastReadAt=lastReadAt;
     }
 
 

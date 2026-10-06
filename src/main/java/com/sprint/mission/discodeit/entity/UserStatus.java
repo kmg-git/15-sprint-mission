@@ -11,20 +11,21 @@ public class UserStatus extends BaseClass {
     private final UUID userId;
     private Instant lastActiveAt;
 
-    public UserStatus(UUID userId){
+    public UserStatus(UUID userId, Instant lastActiveAt){
         super();
         this.userId=userId;
-        this.lastActiveAt=this.updatedAt;
+        this.lastActiveAt=lastActiveAt;
+
     }
 
-    public void update(){
+    public void update(Instant lastActiveAt){
 
         setUpdatedAt();
-        this.lastActiveAt=updatedAt;
+        this.lastActiveAt=lastActiveAt;
     }
 
     public boolean isOnline(){
-        return Duration.between(getUpdatedAt(), Instant.now()).toMinutes() < 5;
+        return Duration.between(getLastActiveAt(), Instant.now()).toMinutes() < 5;
     }
 
 }

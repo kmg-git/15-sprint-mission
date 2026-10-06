@@ -1,6 +1,7 @@
 package com.sprint.mission.discodeit.controller;
 
 import com.sprint.mission.discodeit.dto.Request.ReadStatusCreateRequest;
+import com.sprint.mission.discodeit.dto.Request.ReadStatusUpdateRequest;
 import com.sprint.mission.discodeit.entity.ReadStatus;
 import com.sprint.mission.discodeit.service.ReadStatusService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,8 +66,9 @@ public class ReadStatusController {
             )
     })
     @PatchMapping("/{readStatusId}")
-    public ResponseEntity<ReadStatus> patchReadStatus(@PathVariable("readStatusId") UUID readStatusId){
-        ReadStatus readStatus = readStatusService.update(readStatusId);
+    public ResponseEntity<ReadStatus> patchReadStatus(@PathVariable("readStatusId") UUID readStatusId,
+                                                      @RequestBody ReadStatusUpdateRequest request){
+        ReadStatus readStatus = readStatusService.update(readStatusId, request);
 
         return ResponseEntity.ok(readStatus);
     }

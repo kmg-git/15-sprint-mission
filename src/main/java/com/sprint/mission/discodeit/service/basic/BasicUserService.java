@@ -14,6 +14,7 @@ import com.sprint.mission.discodeit.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -51,7 +52,7 @@ public class BasicUserService implements UserService {
                 .orElse(null);
 
         User user = new User(userCreateRequest.email(),userCreateRequest.password(),userCreateRequest.username(),profileId);
-        UserStatus userStatus = new UserStatus(user.getId());
+        UserStatus userStatus = new UserStatus(user.getId(), Instant.now());
         userRepository.save(user);
         userStatusRepository.save(userStatus);
 

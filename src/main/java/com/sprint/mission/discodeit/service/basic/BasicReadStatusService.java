@@ -1,6 +1,7 @@
 package com.sprint.mission.discodeit.service.basic;
 
 import com.sprint.mission.discodeit.dto.Request.ReadStatusCreateRequest;
+import com.sprint.mission.discodeit.dto.Request.ReadStatusUpdateRequest;
 import com.sprint.mission.discodeit.entity.ReadStatus;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
 import com.sprint.mission.discodeit.repository.ReadStatusRepository;
@@ -9,6 +10,7 @@ import com.sprint.mission.discodeit.service.ReadStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -35,7 +37,8 @@ public class BasicReadStatusService implements ReadStatusService {
             throw new IllegalArgumentException("해당 채널, 유저의 ReadStatus가 이미 존재합니다");
         }
 
-        ReadStatus readStatus = new ReadStatus(readStatusCreateRequest.userId(),readStatusCreateRequest.channelId());
+        ReadStatus readStatus = new ReadStatus(readStatusCreateRequest.userId(),readStatusCreateRequest.channelId(),
+                readStatusCreateRequest.lastReadAt());
         return readStatusRepository.save(readStatus);
     }
 
@@ -56,13 +59,13 @@ public class BasicReadStatusService implements ReadStatusService {
     }
 
     @Override
-    public ReadStatus update(UUID id) {
+    public ReadStatus update(UUID id, ReadStatusUpdateRequest readStatusUpdateRequest) {
         ReadStatus readStatus = readStatusRepository.findById(id).orElseThrow(() -> new NoSuchElementException("ReadStatus id 없음 : " + id));
-        readStatus.update();
+        readStatus.update(readStatusUpdateRequest.newLastReadAt());
         return readStatusRepository.save(readStatus);
     }
 
-    @Override
+    /*@Override
     public List<ReadStatus> updateAllByUserId(UUID userId) {
 
         List<ReadStatus> readStatusList = readStatusRepository.findAllByUserId(userId);
@@ -79,7 +82,7 @@ public class BasicReadStatusService implements ReadStatusService {
             update(entry.getId());
         }
         return readStatusList;
-    }
+    }*/
 
     @Override
     public void delete(UUID id) {

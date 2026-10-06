@@ -1,5 +1,7 @@
 package com.sprint.mission.discodeit.service.basic;
 
+import com.sprint.mission.discodeit.dto.Request.UserStatusCreateRequest;
+import com.sprint.mission.discodeit.dto.Request.UserStatusUpdateRequest;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.entity.UserStatus;
 import com.sprint.mission.discodeit.repository.UserRepository;
@@ -17,7 +19,8 @@ public class BasicUserStatusService implements UserStatusService {
     private final UserRepository userRepository;
     private final UserStatusRepository userStatusRepository;
     @Override
-    public UserStatus create(UUID userId) {
+    public UserStatus create(UserStatusCreateRequest userStatusCreateRequest) {
+        UUID userId =userStatusCreateRequest.userId();
 
         if (!userRepository.existsById(userId)) {
             throw new NoSuchElementException("존재하지 않는 유저 id : " + userId);
@@ -26,7 +29,7 @@ public class BasicUserStatusService implements UserStatusService {
         if(userStatusRepository.existsByUserId(userId)){
             throw new IllegalArgumentException("이미 해당 유저의 스테이터스가 존재합니다. user ID : "+userId);
         }
-        UserStatus userStatus = new UserStatus(userId);
+        UserStatus userStatus = new UserStatus(userId,userStatusCreateRequest.lastActiveAt());
         return userStatusRepository.save(userStatus);
 
     }
@@ -43,22 +46,22 @@ public class BasicUserStatusService implements UserStatusService {
     }
 
     @Override
-    public UserStatus update(UUID id) {
+    public UserStatus update(UUID id, UserStatusUpdateRequest userStatusUpdateRequest) {
         UserStatus userStatus = userStatusRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("유저 스테이터스 id 없음 : " + id));
 
-        userStatus.update();
+        userStatus.update(userStatusUpdateRequest.newLastActiveAt());
 
         return userStatusRepository.save(userStatus);
 
     }
 
     @Override
-    public UserStatus updateByUserId(UUID userId) {
+    public UserStatus updateByUserId(UUID userId, UserStatusUpdateRequest userStatusUpdateRequest) {
         UserStatus userStatus = userStatusRepository.findByUserId(userId).
                 orElseThrow(() -> new NoSuchElementException("유저의 스테이터스가 없음 userID : " + userId));
 
-        userStatus.update();
+        userStatus.update(userStatusUpdateRequest.newLastActiveAt());
         return userStatusRepository.save(userStatus);
     }
 
