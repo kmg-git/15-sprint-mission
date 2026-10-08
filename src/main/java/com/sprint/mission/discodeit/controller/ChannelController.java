@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,11 +79,11 @@ public class ChannelController {
     })
     @PatchMapping("/{channel-id}")
     public ResponseEntity<Channel> patchChannel(
-            @PathVariable("channel-id") UUID uuid, @RequestBody ChannelUpdateRequest channelUpdateRequest) {
+            @PathVariable("channel-id") UUID uuid, @RequestBody PublicChannelUpdateRequest publicChannelUpdateRequest) {
 
 
 
-        Channel channel = channelService.update(uuid, channelUpdateRequest);
+        Channel channel = channelService.update(uuid, publicChannelUpdateRequest);
         return ResponseEntity.status(HttpStatus.OK).body(channel);
     }
 

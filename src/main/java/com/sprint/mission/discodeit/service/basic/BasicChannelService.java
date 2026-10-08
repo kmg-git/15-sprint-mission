@@ -1,6 +1,6 @@
 package com.sprint.mission.discodeit.service.basic;
 
-import com.sprint.mission.discodeit.dto.Request.ChannelUpdateRequest;
+import com.sprint.mission.discodeit.dto.Request.PublicChannelUpdateRequest;
 import com.sprint.mission.discodeit.dto.Request.PrivateChannelCreateRequest;
 import com.sprint.mission.discodeit.dto.Request.PublicChannelCreateRequest;
 import com.sprint.mission.discodeit.dto.Response.ChannelDto;
@@ -111,13 +111,13 @@ public class BasicChannelService implements ChannelService {
 
 
     @Override
-    public Channel update(UUID id,ChannelUpdateRequest channelUpdateRequest) {
+    public Channel update(UUID id, PublicChannelUpdateRequest publicChannelUpdateRequest) {
         Channel channel = channelRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("채널 id 없음 : " + id));
         if(channel.getType()==ChannelType.PRIVATE){
             throw new IllegalArgumentException("private채널은 업데이트할 수 없습니다.");
         }
-        channel.update(channelUpdateRequest.name(),channelUpdateRequest.description());
+        channel.update(publicChannelUpdateRequest.name(), publicChannelUpdateRequest.description());
         return channelRepository.save(channel);
     }
 
