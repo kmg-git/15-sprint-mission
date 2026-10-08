@@ -1,26 +1,36 @@
 package com.sprint.mission.discodeit.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 
+@Table(name = "user_statuses")
+@Entity
 @Getter
-public class UserStatus extends BaseClass {
-    private final UUID userId;
+public class UserStatus extends BaseUpdatableEntity {
+    @OneToOne(fetch = FetchType.LAZY)
+    private User user;
+    
+
     private Instant lastActiveAt;
 
-    public UserStatus(UUID userId, Instant lastActiveAt){
+    protected UserStatus(){}
+
+    public UserStatus(User user, Instant lastActiveAt){
         super();
-        this.userId=userId;
+        this.user=user;
         this.lastActiveAt=lastActiveAt;
 
     }
 
     public void update(Instant lastActiveAt){
 
-        setUpdatedAt();
         this.lastActiveAt=lastActiveAt;
     }
 

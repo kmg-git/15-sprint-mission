@@ -1,29 +1,52 @@
 package com.sprint.mission.discodeit.entity;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.util.*;
 
-//누가,머라고,반응,
 @Getter
-public class Message extends BaseClass  {
-    private final UUID channelId;
-    private final UUID authorId;
+@Entity
+@Table(name = "messages")
+public class Message extends BaseUpdatableEntity {
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "channel_id",nullable = false)
+    private Channel channel;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column(columnDefinition = "TEXT")
     private String content;
-    private List<UUID> attachmentIds;
 
 
-    //////////////////////////////////
+    @ManyToMany
+    @JoinTable(
+            name = "message_attachments",
+            joinColumns = @JoinColumn(name = "message_id"),
+            inverseJoinColumns = @JoinColumn(name = "attachment_id")
+    )
+    private List<BinaryContent> attachments;
 
 
 
-    public Message(UUID channelId, UUID userId , String content, List<UUID> attachmentIds){
-        this.channelId=channelId;
-        this.authorId =userId;
+
+
+
+    protected Message(){
+
+    }
+
+
+    public Message(Channel channel, User user , String content, List<BinaryContent> attachments){
+        this.channel=channel;
+        this.user =user;
         this.content = content;
-        this.attachmentIds = attachmentIds == null
+        this.attachments = attachments == null
                 ? new ArrayList<>()
-                : new ArrayList<>(attachmentIds);
+                : new ArrayList<>(attachments);
     }
 
 
@@ -32,8 +55,6 @@ public class Message extends BaseClass  {
 
     public void update(String message){
         this.content =message;
-        //this.attachmentIds=attachmentIds;
-        setUpdatedAt();
     }
 
 

@@ -1,14 +1,25 @@
 package com.sprint.mission.discodeit.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Getter;
 
 import java.time.Instant;
 import java.util.UUID;
+
+@Table(name = "read_statuses")
+@Entity
 @Getter
-public class ReadStatus extends BaseClass{
-    private final UUID userId;
-    private final UUID channelId;
+public class ReadStatus extends BaseUpdatableEntity {
+
+
+    private User user;
+    private Channel channel;
     private Instant lastReadAt;
+
+    protected ReadStatus(){
+
+    }
 
     public ReadStatus(UUID userId, UUID channelId,Instant lastReadAt) {
         super();
@@ -18,8 +29,6 @@ public class ReadStatus extends BaseClass{
     }
 
     public void update(Instant lastReadAt){
-
-        setUpdatedAt();
         this.lastReadAt=lastReadAt;
     }
 
