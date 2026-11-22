@@ -74,9 +74,27 @@ jobs:
           image: ${{ steps.build-image.outputs.image }}
 
       - name: ECS에 배포하고 안정화까지 대기
+        id: ecs-deploy
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.render.outputs.task-definition }}
           cluster: ${{ env.ECS_CLUSTER }}
           service: ${{ env.ECS_SERVICE }}
           wait-for-service-stability: true
+
+      - name: ECS 배포 실패 원인 확인
+        if: ${{ failure() && steps.ecs-deploy.outcome == 'failure' }}
+        continue-on-error: true
+        run: |
+          aws ecs describe-services --cluster "$ECS_CLUSTER" --services "$ECS_SERVICE" \
+            --query 'services[0].events[:10].{time:createdAt,message:message}' --output table
+
+          stopped_tasks=$(aws ecs list-tasks --cluster "$ECS_CLUSTER" \
+            --service-name "$ECS_SERVICE" --desired-status STOPPED --max-items 20 \
+            --query 'taskArns' --output text)
+          if [[ -n "$stopped_tasks" && "$stopped_tasks" != "None" ]]; then
+            read -r -a task_arns <<< "$stopped_tasks"
+            aws ecs describe-tasks --cluster "$ECS_CLUSTER" --tasks "${task_arns[@]}" \
+              --query 'tasks[].{taskDefinition:taskDefinitionArn,stoppedAt:stoppedAt,reason:stoppedReason,containers:containers[].{name:name,exitCode:exitCode,reason:reason}}' \
+              --output json
+          fi
