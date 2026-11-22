@@ -43,16 +43,34 @@ jobs:
           echo "image=$REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: 현재 태스크 정의 내려받기
+        id: task-definition
+        env:
+          REGISTRY: ${{ steps.ecr-login.outputs.registry }}
         run: |
-          aws ecs describe-task-definition --task-definition $TASK_FAMILY \
-            --query taskDefinition > task-definition.json
+          aws ecs describe-task-definition --task-definition "$TASK_FAMILY" \
+            --query taskDefinition --output json > task-definition.json
+
+          image_repository="$REGISTRY/$ECR_REPOSITORY"
+          if ! container_name=$(jq -er --arg repo "$image_repository" '
+            [.containerDefinitions[]
+              | select(.image == $repo or
+                  (.image | startswith($repo + ":") or startswith($repo + "@")))
+              | .name]
+            | if length == 1 then .[0] else empty end
+          ' task-definition.json); then
+            echo "::error::Expected exactly one container using $image_repository in $TASK_FAMILY."
+            jq -r '.containerDefinitions[] | "\(.name) -> \(.image)"' task-definition.json
+            exit 1
+          fi
+
+          echo "container-name=$container_name" >> "$GITHUB_OUTPUT"
 
       - name: 태스크 정의에 새 이미지 끼우기
         id: render
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: discodeit  # 본인 컨테이너 이름
+          container-name: ${{ steps.task-definition.outputs.container-name }}
           image: ${{ steps.build-image.outputs.image }}
 
       - name: ECS에 배포하고 안정화까지 대기
